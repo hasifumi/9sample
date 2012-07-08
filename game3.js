@@ -52,11 +52,11 @@ SceneField.prototype.initialize = function(){
   listBox1.x = 20;
   listBox1.y = 30;
   this.addChild(listBox1);
-  /*
+  /*//{{{
   this.addEventListener("touchend", function(){
     console.log("field scene touched");
   });
-  */
+  *///}}}
 };//}}}
 
 ListBox = enchant.Class.create(enchant.Group);
@@ -119,10 +119,21 @@ ListBox.prototype.updateText = function(list){//{{{
       return (i == j ? "→" : "　") + e;
     }).join(<"<br/>")
   });
+  */
+  var ret = "";
+  for (var i = 0; i < list.length; i++) {
+    for (var j = 0; j < list.length; j++) {
+      if( i == j ){
+        ret = ret + ("→" + list[j] + "<br/>")
+      } else {
+        ret = ret + ("  " + list[j] + "<br/>")
+      }
+    }
+  };
+  var selectedTexts = ret;
   this.selectedTexts = selectedTexts;
   this.selected = 0;
   this.focus = this.focus;
-  */
 };//}}}
 /*
 ListBox.prototype.visible = {//{{{
@@ -136,6 +147,7 @@ var util = {};
 util.createFrame = function(width, height){//{{{
   var sur = new Surface(width, height);
   var ctx = sur.context;
+  ctx.radius = 20;
   ctx.lineWidth = 4;
   ctx.strokeStyle = "white";
   ctx.rect(0, 0, width, height);
