@@ -38,7 +38,7 @@ SceneTitle.prototype.initialize = function(){
 SceneField = enchant.Class.create(enchant.Scene);//{{{
 SceneField.prototype.initialize = function(){
   enchant.Scene.call(this);
-  var title = new Label();
+  var title = new Label();//{{{
   title.text = "Field";
   title.color = "green";
   title.x = 10;
@@ -47,90 +47,102 @@ SceneField.prototype.initialize = function(){
     console.log("field label touched");
     //game.pushScene(game.rootScene);
   });
-  this.addChild(title);
-  var listBox1 = new ListBox(["test1", "test2"], 100, 100);
+  this.addChild(title);//}}}
+
+  var list = ["test1", "test2", "test3", "test4"];//{{{
+  var listBox1 = new ListBox(list, 100, 100);
   listBox1.x = 20;
   listBox1.y = 30;
-  this.addChild(listBox1);
-  /*//{{{
-  this.addEventListener("touchend", function(){
-    console.log("field scene touched");
+  listBox1.setFocus(true);
+  //listBox1.setFocus(false);
+  this.addChild(listBox1);//}}}
+
+  var upBtn = new Label("up");//{{{
+  upBtn.x = 150;
+  upBtn.y = 50;
+  upBtn.color = "white";
+  upBtn.addEventListener("touchend", function(){
+    listBox1.onUp();
+    console.log("listBox1.selected:" + listBox1.selected);
   });
-  *///}}}
+  this.addChild(upBtn);//}}}
+  var downBtn = new Label("down");//{{{
+  downBtn.x = 150;
+  downBtn.y = 100;
+  downBtn.color = "white";
+  downBtn.addEventListener("touchend", function(){
+    listBox1.onDown();
+    console.log("listBox1.selected:" + listBox1.selected);
+  });
+  this.addChild(downBtn);//}}}
+
 };//}}}
 
 ListBox = enchant.Class.create(enchant.Group);
-ListBox.prototype.initialize = function(list, width, height, onSeclected){
+ListBox.prototype.initialize = function(list, width, height, focus, onSeclected){//{{{
   enchant.Group.call(this);
   var frame = util.createFrame(width, height);
   var lab = new Label("");
   lab.x = 10;
   lab.y = 10;
   lab.color = "white";
-  //lab.text = "test";
   //this.onSelected = onSelected;
   this.onChange = function(){};
   this.lab = lab;
-  this.focus = false;
   this.addChild(frame);
   this.addChild(lab);
   this.updateText(list);
-  lab.text = this.defaultText;
-};
-/*
+};//}}}
 ListBox.prototype.onUp = function(){//{{{
-  if (this.focus || this.selected <= 0)
+  if (!this.focus || this.selected <= 0)
     return;
   this.selected -= 1;
   this.lab.text = this.selectedTexts[this.selected];
   this.onChange(this.selected);
 };//}}}
 ListBox.prototype.onDown= function(){//{{{
-  if (this.focus || this.selected >= this.selectedTexts.length -1)
+  if (!this.focus || this.selected >= this.selectedTexts.length -1)
     return;
   this.selected += 1;
   this.lab.text = this.selectedTexts[this.selected];
   this.onChange(this.selected);
 };//}}}
+/*
 ListBox.prototype.onRight = function(){//{{{
   if (!this.focus)
     return;
   this.onSelected(this.selected);
 };//}}}
-ListBox.prototype.focus = {//{{{
-  get: function(){
-    return this._focus;
-  },
-  set: function(val){
-    this._focus = val;
-    if(val)
-      this.lab.text = this.selectedTexts[this.selected];
-    else
-      this.lab.text = this.defaultText;
-  },
-};//}}}
 */
+ListBox.prototype.focus = {};//{{{
+ListBox.prototype.getFocus = function(){ return this._focus };
+ListBox.prototype.setFocus = function(val){
+  console.log(val);
+  this._focus = val;
+  if(val){
+    this.lab.text = this.selectedTexts[this.selected]
+  } else {
+    this.lab.text = this.defaultText
+  };
+};//}}}
 ListBox.prototype.updateText = function(list){//{{{
   var defaultText = list.map(function(e) { return "  "+ e }).join("<br/>");
   this.defaultText = defaultText;
-  /*
-  var selectedTexts = list.map(function(ee, i, arrr) {
-    return list.map(function(e, j, arr) {
-      return (i == j ? "→" : "　") + e;
-    }).join(<"<br/>")
-  });
-  */
-  var ret = "";
+  var ret_i = [];
   for (var i = 0; i < list.length; i++) {
+    var ret_j = "";
     for (var j = 0; j < list.length; j++) {
       if( i == j ){
-        ret = ret + ("→" + list[j] + "<br/>")
+        ret_j = ret_j + ("→" + list[j] + "<br/>")
       } else {
-        ret = ret + ("  " + list[j] + "<br/>")
+        ret_j = ret_j + ("  " + list[j] + "<br/>")
       }
     }
+    ret_i.push(ret_j);
   };
-  var selectedTexts = ret;
+  console.log(this.defaultText);
+  console.log(ret_i);
+  var selectedTexts = ret_i;
   this.selectedTexts = selectedTexts;
   this.selected = 0;
   this.focus = this.focus;
